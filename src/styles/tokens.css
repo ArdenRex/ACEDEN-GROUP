@@ -1,0 +1,168 @@
+/*
+  Design tokens — the single source of truth for the visual system.
+  Every color, spacing value, radius, shadow, and motion constant used
+  anywhere on the site should trace back to a variable defined here,
+  not a hardcoded value in a component.
+*/
+
+:root {
+  /* ============================================================
+     COLOR
+     Warm paper base, near-black ink. No second hue for general UI —
+     interactivity reads through ink weight, underline, and border,
+     not color. Red is the one saturated signal in the system, spent
+     only where the product is actively doing something. A second,
+     dark surface family exists for the product-window layer that
+     grows through the page (Ch.02 → Ch.08-09); it is a place, not a
+     decoration, so it gets its own ink/border/red variants rather
+     than reusing the paper-layer values at reduced opacity.
+     ============================================================ */
+  --color-background: #faf7f1;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f2ede3;
+
+  --color-ink: #16151a;
+  --color-ink-muted: #6b6660;
+  --color-ink-faint: #a39d93;
+
+  --color-border: rgba(22, 21, 26, 0.12);
+  --color-border-strong: rgba(22, 21, 26, 0.24);
+
+  /* Red — the only saturated color in the system. Means: system
+     action, system response, an important state, high/critical
+     priority, price, the primary CTA. Never a background wash,
+     border tint, or heading color. */
+  --color-red: #a6332b;
+  --color-red-muted: #c77c74;
+  --color-red-wash: #f3e4e2;
+
+  /* ------------------------------------------------------------
+     ACCENT GRADIENT (visual-identity pass) — a second, warm color
+     paired with red specifically to give the site a distinct,
+     memorable identity beyond ink-on-paper: the hero's ambient glow
+     and the primary CTA buttons, site-wide. Gold sits next to red on
+     the same warm side of the wheel rather than introducing a random
+     hue, so the two read as one family, not two unrelated accents.
+     Still deliberately scarce — this is the *second* reserved color,
+     not a general palette expansion; everything else in the system
+     (borders, body text, structural marks) stays ink as before.
+     ------------------------------------------------------------ */
+  --color-gold: #d98e2b;
+  --color-gold-soft: #f0c98a;
+  --gradient-accent: linear-gradient(135deg, var(--color-red) 0%, var(--color-gold) 100%);
+  --shadow-glow-accent: 0 10px 32px -8px rgba(166, 51, 43, 0.38), 0 4px 14px -4px rgba(217, 142, 43, 0.28);
+
+  --color-focus-ring: var(--color-ink);
+
+  /* ------------------------------------------------------------
+     Product-window layer — the dark, software-like surface that
+     first appears small (Ch.02) and becomes dominant by the price/
+     CTA chapters. Tuned independently of the paper-layer values:
+     a straight low-opacity ink doesn't read as "real" on near-black,
+     and red needs more luminance here to hold the same visual weight
+     it has on paper.
+     ------------------------------------------------------------ */
+  --color-surface-dark: #121116;
+  --color-ink-on-dark: #f3efe7;
+  --color-ink-muted-on-dark: #9a948c;
+  --color-border-on-dark: rgba(243, 239, 231, 0.12);
+  --color-border-on-dark-strong: rgba(243, 239, 231, 0.24);
+  --color-red-on-dark: #e2493d;
+
+  /* ============================================================
+     RADIUS — restrained. No pill shapes, no heavy rounding.
+     ============================================================ */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* ============================================================
+     SHADOW — near-absent by default. Depth comes from spacing,
+     borders, and tonal contrast, not blur. One deliberate exception:
+     the product-window frame is the single element on the page
+     allowed to lift off the surface with real shadow, because it is
+     depicting an actual raised software surface, not decorating a
+     marketing card.
+     ============================================================ */
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px rgba(22, 21, 26, 0.05);
+  --shadow-sm: 0 2px 10px rgba(22, 21, 26, 0.07);
+  --shadow-product-window: 0 24px 60px -12px rgba(10, 9, 12, 0.45), 0 4px 16px -4px rgba(10, 9, 12, 0.3);
+  /* Beauty pass, bold step 1: the product window is the single most-
+     seen UI element on the page (it grows continuously from Ch.01 to
+     Ch.04) and previously carried zero color of its own — a plain
+     dark drop shadow, same as any card. This layers a persistent,
+     ambient version of --gradient-accent underneath that shadow: a
+     soft red/gold halo the panel always sits in, not just a hover
+     state. Kept as a soft outer glow rather than a hard ring so it
+     reads as "this surface is lit," not as a decorated border. */
+  --shadow-product-window-glow: 0 0 90px -16px rgba(166, 51, 43, 0.4), 0 0 150px -24px rgba(217, 142, 43, 0.32),
+    0 24px 60px -12px rgba(10, 9, 12, 0.45), 0 4px 16px -4px rgba(10, 9, 12, 0.3);
+
+  /* ============================================================
+     SPACING — supports the sparse -> structured -> dense -> resolved
+     -> sparse emotional arc across chapters.
+     ============================================================ */
+  --space-micro: 0.5rem; /* 8px  — tight/inline */
+  --space-xs: 0.75rem; /* 12px */
+  /* Fallback only. PersistentNav measures its own real rendered
+     height (ResizeObserver) and overwrites this variable on
+     :root as soon as it mounts — every chapter's pinned panel reads
+     whatever PersistentNav actually is, not a guessed constant. This
+     value only holds for the brief pre-hydration moment before that
+     measurement runs. A prior attempt hand-tuned this to a static
+     56px, which was close but not exact (border + button line-height
+     pushed the real header a few px taller), so the nav still quietly
+     overlapped the top of every chapter's content — the actual bug
+     being fixed now is "stop guessing," not "guess a better number."
+  */
+  --nav-height: 3.5rem; /* 56px — fallback before JS measures */
+  --space-sm: 1rem; /* 16px */
+  --space-component: 1.5rem; /* 24px — within a component */
+  --space-md: 2rem; /* 32px */
+  --space-lg: 3rem; /* 48px */
+  --space-xl: 5rem; /* 80px */
+  --space-section-mobile: 4rem; /* 64px  — between sections, mobile */
+  --space-section: 8rem; /* 128px — between sections, desktop */
+  --space-chapter-mobile: 6rem; /* 96px  — between chapters, mobile */
+  --space-chapter: 12rem; /* 192px — between chapters, desktop */
+
+  --gutter-mobile: 1.25rem; /* 20px */
+  --gutter-tablet: 2.5rem; /* 40px */
+  --gutter-desktop: clamp(2rem, 6vw, 6rem);
+
+  /* ============================================================
+     CONTENT WIDTHS
+     ============================================================ */
+  --width-narrow: 38rem; /* long-form reading */
+  --width-editorial: 52rem; /* default prose/heading column */
+  --width-wide: 72rem; /* product-UI / visualization moments */
+  --width-max: 90rem; /* outer page ceiling */
+
+  /* ============================================================
+     MOTION — calm, precise, controlled. No bounce or elastic UI.
+     ============================================================ */
+  --duration-fast: 150ms;
+  --duration-base: 320ms;
+  --duration-slow: 420ms;
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ============================================================
+     CONTINUITY LINE — defaults consumed by the ContinuityLine
+     primitive; override per-usage via component props, not by
+     editing these globals. Ink by default — the line earns color
+     only at the moments red is meaningful (see ContinuityLine.tsx).
+     ============================================================ */
+  --line-color: var(--color-ink-muted);
+  --line-thickness: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}
