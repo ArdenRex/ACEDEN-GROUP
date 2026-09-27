@@ -1,0 +1,275 @@
+@import '../styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    /* Beauty pass, step 14: the site is a deliberately fixed warm-
+       paper/near-black system, not one that adapts to system dark
+       mode — but without this, a visitor on a dark-mode OS still gets
+       browser-native chrome (form control theming, the scrollbar
+       this same rule pairs with below) rendered in the browser's own
+       dark palette, clashing against the paper background around it.
+       `light` pins native UI to the same warm/light assumption the
+       rest of the page already makes everywhere else. */
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  ::selection {
+    background-color: var(--color-ink);
+    color: var(--color-background);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font-family: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  /* Focus is never hidden. Visible, precise, on-brand. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* BUGFIX (flagged step 7A): --color-focus-ring resolves to
+     --color-ink (near-black) everywhere, which is nearly invisible
+     against the product-window layer's near-black
+     --color-surface-dark (Ch.05–07). Those three chapter roots carry
+     data-theme="dark" (see chapterSurfaces.ts's DARK_CHAPTER_IDS,
+     the same source of truth ScrollProgressRail and AmbientDust
+     read), so scope the ring to the dark-layer ink color only
+     there — every other chapter keeps the default. */
+  [data-theme='dark'] :focus-visible {
+    outline-color: var(--color-ink-on-dark);
+  }
+
+  /* Native cursor is hidden only once CustomCursor.tsx has confirmed
+     a fine pointer is present and reduced-motion is off, and applies
+     that state by toggling this class — never a bare `cursor: none`
+     that could strand a visitor without any cursor at all. */
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none;
+  }
+
+  /* Minimal scrollbar treatment, refined rather than decorative.
+     WebKit/Blink get the detailed thumb+track version above; Firefox
+     has no equivalent pseudo-elements, only these two shorthand
+     properties (step 14) — same intent (thin, ink-muted-strong
+     thumb, invisible track), just the coarser API Firefox exposes. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--color-background);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@keyframes signal-dot-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* ================================================================
+     Semantic typography scale. Hierarchy comes from size, weight,
+     line-height, and tracking together — never from raw font-weight
+     alone. Fluid sizes (clamp) so nothing needs a separate mobile
+     override just to avoid overflowing small viewports.
+     ================================================================ */
+
+  /* FIX (header-overlap): all three clamp() maxes below used to be a
+     flat rem value driven only by viewport WIDTH (vw). On a wide-but-
+     short window (laptop with a shallow viewport height, e.g. ~600px)
+     that let these headlines render at their full desktop size while
+     the sticky chapter section above them only has
+     `calc(100dvh - var(--nav-height))` of height to work with — the
+     multi-line heading then stands taller than that box, and since
+     every chapter section clips with `overflow-hidden`, the excess
+     gets cut off at the box's own top edge, i.e. exactly where the
+     fixed header ends. That reads as "the header is hiding the
+     content" even though the header itself never moved — the text
+     underneath it was clipped away. Wrapping each max in
+     `min(<old max>, Nvh)` caps the font size by available viewport
+     HEIGHT too, so it can never grow past what the sticky box can
+     actually show. On normal-height viewports Nvh is larger than the
+     old flat max, so `min()` still resolves to the old value and
+     nothing changes; it only pulls the size down on short viewports. */
+  .text-display-xl {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.75rem, 1.5rem + 5vw, min(5.5rem, 11vh));
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+  .text-display-lg {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.25rem, 1.25rem + 4vw, min(4rem, 9vh));
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .text-display-md {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.75rem, 1rem + 2.5vw, min(2.75rem, 7vh));
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .text-heading-lg {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.75rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .text-heading-md {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+  .text-heading-sm {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
+
+  /* Optical sizing pass: line-height and tracking above were tuned by
+     eye against the desktop-scale end of each clamp(). Below the `sm`
+     breakpoint the clamp has already pulled the rendered size down
+     close to its minimum, where that same tight tracking and dense
+     line-height start to read as cramped rather than confident — so
+     both loosen slightly once the type itself is small, rather than
+     carrying a large-display tuning down to phone sizes unchanged. */
+  @media (max-width: 640px) {
+    .text-display-xl {
+      line-height: 1.08;
+      letter-spacing: -0.012em;
+    }
+    .text-display-lg {
+      line-height: 1.12;
+      letter-spacing: -0.008em;
+    }
+    .text-display-md {
+      line-height: 1.18;
+      letter-spacing: -0.005em;
+    }
+    .text-heading-lg {
+      line-height: 1.32;
+      letter-spacing: -0.005em;
+    }
+  }
+  .text-body-lg {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+  .text-body-md {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+  .text-body-sm {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+  .text-label {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+  .text-mono {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+  .text-price {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+}
