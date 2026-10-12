@@ -420,7 +420,7 @@ export function Chapter02Disassembly() {
             <PanelPresence opacity={1} />
             <Workspace stage={3} resolved title={TITLE} fields={SIGNALS.map((s) => s.field)} entryRef={entryRef} />
           </div>
-          <div className="max-w-narrow text-center">
+          <div className="card-glass max-w-narrow text-center">
             <p className="text-heading-sm mb-xs">A request is more than a sentence.</p>
             <p className="text-body-sm text-ink-muted">
               People, timing, urgency and work can be understood without forcing the person to structure the
@@ -448,7 +448,7 @@ export function Chapter02Disassembly() {
             style={{ opacity: planeOpacity }}
             className="pointer-events-none absolute left-1/2 top-1/2 w-[70vw] -translate-x-1/2 -translate-y-1/2"
           >
-            <ContinuityLine orientation="horizontal" color="ink-muted" thickness={1} className="h-px w-full" />
+            <ContinuityLine orientation="horizontal" color="red-on-dark" thickness={1} className="h-px w-full" />
           </motion.div>
 
           <motion.div style={{ scale: sentenceScale, y: sentenceY }} className="relative z-10 flex justify-center">
@@ -466,11 +466,11 @@ export function Chapter02Disassembly() {
           {/* Bridge into Chapter 03 — an emerging second slot, only at the very end. */}
           <motion.div
             aria-hidden="true"
-            style={{ opacity: bridgeOpacity, borderColor: 'var(--color-border-on-dark)' }}
+            style={{ opacity: bridgeOpacity, borderColor: 'var(--color-border-glow)', boxShadow: 'var(--glow-orange-soft)' }}
             className="pointer-events-none absolute left-1/2 top-[calc(50%+11rem)] hidden h-[8rem] w-[min(40vw,12rem)] translate-x-[3rem] rounded-lg border border-dashed sm:block"
           />
 
-          <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10 mt-md max-w-narrow text-center">
+          <motion.div style={{ opacity: textOpacity, y: textY }} className="card-glass relative z-10 mt-md max-w-narrow text-center">
             <p className="text-heading-sm mb-xs">A request is more than a sentence.</p>
             <p className="text-body-sm text-ink-muted">
               People, timing, urgency and work can be understood without forcing the person to structure the

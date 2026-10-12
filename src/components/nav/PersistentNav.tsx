@@ -69,9 +69,14 @@ export function PersistentNav() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -8 }}
           transition={{ duration: prefersReducedMotion ? 0 : duration.fast, ease: ease.standard }}
-          className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/75 backdrop-blur-md"
+          className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/70 shadow-[0_12px_32px_-18px_rgba(0,0,0,0.9)] backdrop-blur-lg"
         >
-          <div className="mx-auto flex w-full max-w-content-max items-center justify-between px-gutter-mobile py-xs sm:px-gutter-tablet lg:px-gutter-desktop">
+          {/* Decorative orange hairline glow along the bar's lower edge. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(255,121,0,0.55)] to-transparent"
+          />
+          <div className="mx-auto flex min-h-[3.75rem] w-full max-w-content-max items-center justify-between px-gutter-mobile py-xs sm:min-h-[var(--header-height)] sm:px-gutter-tablet lg:px-gutter-desktop">
             <Link
               href="/"
               className="flex items-center opacity-100 transition-opacity duration-fast hover:opacity-70 focus-visible:opacity-70"
@@ -87,7 +92,8 @@ export function PersistentNav() {
             <nav className="flex items-center gap-sm sm:gap-component" aria-label="Primary">
               <UnderlineLink
                 href={getLoginUrl()}
-                className="hidden text-body-sm text-ink-muted transition-colors duration-fast hover:text-ink sm:inline"
+                underlineClassName="hidden"
+                className="text-nav hidden items-center rounded-pill border border-border-strong px-5 py-2.5 text-ink-muted transition-[color,border-color,box-shadow] duration-fast hover:border-border-glow hover:text-ink hover:shadow-[var(--glow-orange-soft)] active:scale-[0.97] sm:inline-flex"
               >
                 Login
               </UnderlineLink>
@@ -98,8 +104,8 @@ export function PersistentNav() {
               <MagneticButton
                 as="a"
                 href={getSignupUrl()}
-                className="group relative inline-block overflow-hidden rounded-md px-component py-micro text-body-sm font-semibold transition-shadow duration-fast hover:shadow-[var(--shadow-glow-accent)]"
-                style={{ background: 'var(--gradient-accent)', color: 'var(--color-ink-on-dark)' }}
+                className="text-button group relative inline-flex items-center overflow-hidden rounded-pill px-5 py-2.5 shadow-[var(--shadow-glow-accent)] transition-[box-shadow,transform] duration-fast hover:shadow-[var(--glow-orange-strong)] active:scale-[0.97]"
+                style={{ background: 'var(--gradient-accent)', color: 'var(--color-on-accent)' }}
               >
                 <span
                   aria-hidden="true"

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
+import { RidgeGlow } from './RidgeGlow';
 
 /**
  * HeroGlow — visual-identity pass, extended into a generative motion
@@ -76,6 +77,7 @@ export function HeroGlow() {
         }
         transition={prefersReducedMotion ? undefined : { duration: 21, delay: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
+      <RidgeGlow />
     </div>
   );
 }

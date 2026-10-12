@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useMotionValueEvent, useSpring, useTransform, type MotionValue } from 'framer-motion';
 import clsx from 'clsx';
+import { PlatformGlow } from '@/components/primitives/RidgeGlow';
 import { Container } from '@/components/primitives/Container';
 import { RecognizedWord } from '@/components/primitives/RecognizedWord';
 import { SignalTravel } from '@/components/primitives/SignalTravel';
@@ -295,7 +296,7 @@ export function Chapter01Conversation() {
   const sentence = (phases: { sarah: 0 | 1 | 2; friday: 0 | 1 | 2; priority: 0 | 1 | 2 }, dim: boolean) => (
     <h1
       className={clsx(
-        'text-display-lg max-w-[15ch] text-balance transition-colors duration-500 sm:max-w-[17ch]',
+        'text-display-lg hero-headline max-w-[15ch] text-balance transition-colors duration-500 sm:max-w-[17ch]',
         dim ? 'text-ink-muted' : 'text-ink',
       )}
     >
@@ -304,10 +305,13 @@ export function Chapter01Conversation() {
         Sarah
       </RecognizedWord>{' '}
       finish the onboarding docs by{' '}
-      <RecognizedWord ref={fridayWordRef} phase={phases.friday}>
-        Friday
-      </RecognizedWord>
-      ? Make it{' '}
+      <span className="whitespace-nowrap">
+        <RecognizedWord ref={fridayWordRef} phase={phases.friday}>
+          Friday
+        </RecognizedWord>
+        ?
+      </span>{' '}
+      Make it{' '}
       <RecognizedWord ref={priorityWordRef} phase={phases.priority}>
         high priority
       </RecognizedWord>
@@ -324,15 +328,18 @@ export function Chapter01Conversation() {
           <Container width="max">
             <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-6">
               <div className="lg:col-span-6">
-                <div className="mb-sm inline-flex items-center gap-[6px] rounded-full border px-sm py-[3px] text-label uppercase tracking-[0.08em]" style={{ borderColor: 'var(--color-border-strong)' }}>
+                <div className="eyebrow mb-sm uppercase">
                   <span className="h-[6px] w-[6px] rounded-full" style={{ background: 'var(--gradient-accent)' }} aria-hidden="true" />
                   AI Workflow Coordinator
                 </div>
                 <p className="text-label mb-sm">Alex &middot; 9:41 AM</p>
                 {sentence({ sarah: 2, friday: 2, priority: 2 }, false)}
               </div>
-              <div className="lg:col-span-6 lg:col-start-7 lg:mt-lg">
-                <Workspace stage={3} resolved title={TITLE} fields={SIGNALS.map((s) => s.field)} entryRef={entryRef} />
+              <div className="relative lg:col-span-6 lg:col-start-7 lg:mt-lg">
+                <PlatformGlow />
+                <div className="relative">
+                  <Workspace stage={3} resolved title={TITLE} fields={SIGNALS.map((s) => s.field)} entryRef={entryRef} />
+                </div>
               </div>
             </div>
           </Container>
@@ -351,7 +358,7 @@ export function Chapter01Conversation() {
           <div ref={overlayRef} className="relative">
             <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-6">
               <motion.div {...mountSettle(0)} className="lg:col-span-6">
-                <div className="mb-sm inline-flex items-center gap-[6px] rounded-full border px-sm py-[3px] text-label uppercase tracking-[0.08em]" style={{ borderColor: 'var(--color-border-strong)' }}>
+                <div className="eyebrow mb-sm uppercase">
                   <span className="h-[6px] w-[6px] rounded-full" style={{ background: 'var(--gradient-accent)' }} aria-hidden="true" />
                   AI Workflow Coordinator
                 </div>
@@ -365,8 +372,11 @@ export function Chapter01Conversation() {
                   resolved,
                 )}
               </motion.div>
-              <motion.div {...mountSettle(0.12)} className="lg:col-span-6 lg:col-start-7 lg:mt-lg">
-                <Workspace stage={arrivedCount} resolved={resolved} title={title} fields={fields} entryRef={entryRef} />
+              <motion.div {...mountSettle(0.12)} className="relative lg:col-span-6 lg:col-start-7 lg:mt-lg">
+                <PlatformGlow />
+                <div className="relative">
+                  <Workspace stage={arrivedCount} resolved={resolved} title={title} fields={fields} entryRef={entryRef} />
+                </div>
               </motion.div>
             </div>
 

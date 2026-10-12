@@ -17,24 +17,24 @@
      decoration, so it gets its own ink/border/red variants rather
      than reusing the paper-layer values at reduced opacity.
      ============================================================ */
-  --color-background: #faf7f1;
-  --color-surface: #ffffff;
-  --color-surface-sunken: #f2ede3;
+  --color-background: #070707;
+  --color-surface: #15110d;
+  --color-surface-sunken: #0d0b09;
 
-  --color-ink: #16151a;
-  --color-ink-muted: #6b6660;
-  --color-ink-faint: #a39d93;
+  --color-ink: #f7f5f1;
+  --color-ink-muted: #b8b1a8;
+  --color-ink-faint: #8a8379;
 
-  --color-border: rgba(22, 21, 26, 0.12);
-  --color-border-strong: rgba(22, 21, 26, 0.24);
+  --color-border: rgba(255, 148, 26, 0.18);
+  --color-border-strong: rgba(255, 148, 26, 0.38);
 
   /* Red — the only saturated color in the system. Means: system
      action, system response, an important state, high/critical
      priority, price, the primary CTA. Never a background wash,
      border tint, or heading color. */
-  --color-red: #a6332b;
-  --color-red-muted: #c77c74;
-  --color-red-wash: #f3e4e2;
+  --color-red: #ff7900;
+  --color-red-muted: #c4681a;
+  --color-red-wash: #2a1708;
 
   /* ------------------------------------------------------------
      ACCENT GRADIENT (visual-identity pass) — a second, warm color
@@ -47,12 +47,26 @@
      not a general palette expansion; everything else in the system
      (borders, body text, structural marks) stays ink as before.
      ------------------------------------------------------------ */
-  --color-gold: #d98e2b;
-  --color-gold-soft: #f0c98a;
-  --gradient-accent: linear-gradient(135deg, var(--color-red) 0%, var(--color-gold) 100%);
-  --shadow-glow-accent: 0 10px 32px -8px rgba(166, 51, 43, 0.38), 0 4px 14px -4px rgba(217, 142, 43, 0.28);
+  --color-gold: #ffb347;
+  --color-gold-soft: #ffd08a;
+  --gradient-accent: linear-gradient(135deg, var(--color-red) 0%, var(--color-orange-bright) 100%);
+  --shadow-glow-accent: 0 10px 32px -8px rgba(255, 121, 0, 0.5), 0 4px 14px -4px rgba(255, 179, 71, 0.32);
 
-  --color-focus-ring: var(--color-ink);
+  /* ------------------------------------------------------------
+     REFERENCE REDESIGN (Step 2.1) — the palette above was inverted
+     from warm paper + red to black/charcoal + orange/amber. Variable
+     NAMES are unchanged on purpose (--color-red now means "the
+     accent", it is orange), so no component needed a rename. The
+     tokens below are new and are consumed by later redesign steps.
+     ------------------------------------------------------------ */
+  --color-orange-bright: #ff941a;
+  --color-surface-card: #17120e;
+  --color-on-accent: #120a03; /* text on orange fills: AA contrast, light text fails */
+  --color-border-glow: rgba(255, 121, 0, 0.5);
+  --glow-orange-soft: 0 0 40px -10px rgba(255, 121, 0, 0.45);
+  --glow-orange-strong: 0 0 70px -12px rgba(255, 121, 0, 0.6), 0 0 24px -8px rgba(255, 179, 71, 0.4);
+
+  --color-focus-ring: var(--color-orange-bright);
 
   /* ------------------------------------------------------------
      Product-window layer — the dark, software-like surface that
@@ -62,20 +76,40 @@
      and red needs more luminance here to hold the same visual weight
      it has on paper.
      ------------------------------------------------------------ */
-  --color-surface-dark: #121116;
-  --color-ink-on-dark: #f3efe7;
-  --color-ink-muted-on-dark: #9a948c;
-  --color-border-on-dark: rgba(243, 239, 231, 0.12);
-  --color-border-on-dark-strong: rgba(243, 239, 231, 0.24);
-  --color-red-on-dark: #e2493d;
+  --color-surface-dark: #15110d;
+  --color-ink-on-dark: #f7f5f1;
+  --color-ink-muted-on-dark: #b8b1a8;
+  --color-border-on-dark: rgba(247, 245, 241, 0.12);
+  --color-border-on-dark-strong: rgba(255, 148, 26, 0.38);
+  --color-red-on-dark: #ff941a;
 
   /* ============================================================
-     RADIUS — restrained. No pill shapes, no heavy rounding.
+     RADIUS — reference redesign (Step 2.3): soft cards (16px), pill buttons.
      ============================================================ */
   --radius-none: 0px;
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* ------------------------------------------------------------
+     LAYOUT TOKENS (Step 2.3) — measured from the reference at 1440px.
+     Breakpoints stay Tailwind defaults (sm 640, md 768, lg 1024,
+     xl 1280, 2xl 1536); the redesign is verified at 1440/1280/1024/
+     768/390/320.
+     ------------------------------------------------------------ */
+  --width-content: 80rem; /* 1280px — reference content width */
+  --header-height: 4.5rem; /* 72px — reference header (applied in Step 3.1) */
+  --radius-input: 10px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+  --button-height-md: 2.75rem; /* 44px */
+  --button-height-lg: 3.125rem; /* 50px */
+  --button-padding-x: 1.5rem;
+  --gap-card: 1rem; /* between cards in a row */
+  --gap-grid: 1.5rem; /* between grid columns/groups */
+  --card-padding: 1.5rem;
+  --section-fade-height: 8rem; /* gradient blend between sections */
+  --ridge-glow-height: 14rem; /* orange horizon glow at section ends */
 
   /* ============================================================
      SHADOW — near-absent by default. Depth comes from spacing,
@@ -86,9 +120,9 @@
      marketing card.
      ============================================================ */
   --shadow-none: none;
-  --shadow-xs: 0 1px 2px rgba(22, 21, 26, 0.05);
-  --shadow-sm: 0 2px 10px rgba(22, 21, 26, 0.07);
-  --shadow-product-window: 0 24px 60px -12px rgba(10, 9, 12, 0.45), 0 4px 16px -4px rgba(10, 9, 12, 0.3);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.55);
+  --shadow-product-window: 0 24px 60px -12px rgba(0, 0, 0, 0.8), 0 4px 16px -4px rgba(0, 0, 0, 0.6);
   /* Beauty pass, bold step 1: the product window is the single most-
      seen UI element on the page (it grows continuously from Ch.01 to
      Ch.04) and previously carried zero color of its own — a plain
@@ -97,8 +131,8 @@
      soft red/gold halo the panel always sits in, not just a hover
      state. Kept as a soft outer glow rather than a hard ring so it
      reads as "this surface is lit," not as a decorated border. */
-  --shadow-product-window-glow: 0 0 90px -16px rgba(166, 51, 43, 0.4), 0 0 150px -24px rgba(217, 142, 43, 0.32),
-    0 24px 60px -12px rgba(10, 9, 12, 0.45), 0 4px 16px -4px rgba(10, 9, 12, 0.3);
+  --shadow-product-window-glow: 0 0 90px -16px rgba(255, 121, 0, 0.45), 0 0 150px -24px rgba(255, 179, 71, 0.3),
+    0 24px 60px -12px rgba(0, 0, 0, 0.8), 0 4px 16px -4px rgba(0, 0, 0, 0.6);
 
   /* ============================================================
      SPACING — supports the sparse -> structured -> dense -> resolved
@@ -123,10 +157,10 @@
   --space-md: 2rem; /* 32px */
   --space-lg: 3rem; /* 48px */
   --space-xl: 5rem; /* 80px */
-  --space-section-mobile: 4rem; /* 64px  — between sections, mobile */
-  --space-section: 8rem; /* 128px — between sections, desktop */
-  --space-chapter-mobile: 6rem; /* 96px  — between chapters, mobile */
-  --space-chapter: 12rem; /* 192px — between chapters, desktop */
+  --space-section-mobile: 3.5rem; /* 56px  — between sections, mobile */
+  --space-section: 6rem; /* 96px — between sections, desktop */
+  --space-chapter-mobile: 5rem; /* 80px  — between chapters, mobile */
+  --space-chapter: 8rem; /* 128px — between chapters, desktop */
 
   --gutter-mobile: 1.25rem; /* 20px */
   --gutter-tablet: 2.5rem; /* 40px */

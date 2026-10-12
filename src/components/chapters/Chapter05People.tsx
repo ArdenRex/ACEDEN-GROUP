@@ -50,13 +50,13 @@ const PeopleField3D = dynamic(
 //     this scale, so it was dropped in favor of ClusterGlow's existing
 //     ink-toned light — see that component and the STEP 55 comment
 //     inside FieldTexture below.)
-const CH05_UNDERTONE = '#241a44';
+const CH05_UNDERTONE = '#1d1006';
 const CH05_SURFACE_BASE = `radial-gradient(130% 100% at 16% 8%, ${CH05_UNDERTONE} 0%, var(--color-surface-dark) 60%)`;
 // Literal hex (not the CSS var) — framer-motion's color interpolation
 // for the paper->dark scroll crossfade needs an actual color to
 // interpolate toward, not a custom property. Matches --color-surface-dark
 // exactly so the crossfade lands on the same near-black.
-const CH05_SURFACE_SOLID = '#121116';
+const CH05_SURFACE_SOLID = '#15110d';
 
 /**
  * Chapter 05 — "The Human Network."

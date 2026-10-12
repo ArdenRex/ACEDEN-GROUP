@@ -632,7 +632,7 @@ function GroupOutline({ opacity, left, top, width, height }: { opacity: MotionVa
   return (
     <motion.div
       aria-hidden="true"
-      style={{ opacity, left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%`, borderColor: 'var(--color-border)' }}
+      style={{ opacity, left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%`, borderColor: 'var(--color-border-glow)', boxShadow: 'var(--glow-orange-soft)' }}
       className="absolute rounded-lg border"
     />
   );
@@ -679,7 +679,7 @@ function PanelGlyph({
 
 function LaneStatic({ title, attributes }: { title: string; attributes: string[] }) {
   return (
-    <div className="flex flex-col items-center gap-xs rounded-lg border border-border p-component text-center">
+    <div className="card-glass flex flex-col items-center gap-xs text-center">
       <p className="text-body-sm font-semibold text-ink">{title}</p>
       {attributes.map((a) => (
         <p key={a} className="text-label">

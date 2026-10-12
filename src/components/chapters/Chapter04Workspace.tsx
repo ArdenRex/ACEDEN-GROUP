@@ -638,12 +638,8 @@ function StaticZone({
       {items.map((item) => (
         <TiltPanel key={item.title}>
           <div
-            className="flex flex-col gap-[2px] rounded-md border p-sm backdrop-blur-sm transition-shadow duration-base hover:shadow-[var(--shadow-glow-accent)]"
-            style={{
-              borderColor: 'var(--color-border-on-dark)',
-              backgroundColor: 'rgba(243, 239, 231, 0.045)',
-              boxShadow: 'inset 0 1px 0 0 rgba(243, 239, 231, 0.07)',
-            }}
+            className="panel-hover flex flex-col gap-[2px] rounded-md border p-sm backdrop-blur-sm"
+            style={{ backgroundColor: 'rgba(243, 239, 231, 0.045)' }}
           >
             <p className="text-body-sm uppercase tracking-[0.06em]" style={{ color: 'var(--color-ink-on-dark)' }}>
               {item.title}

@@ -118,6 +118,32 @@ export default function DesignSystemPreview() {
             </div>
           </div>
 
+          {/* Redesign primitives (Step 2.4) — internal style guide only */}
+          <h2 className="text-heading-md mb-component">Redesign primitives</h2>
+          <div className="flex flex-wrap items-center gap-component mb-component">
+            <a href="#primitives" className="btn btn-primary btn-lg">btn-primary</a>
+            <a href="#primitives" className="btn btn-secondary btn-lg">btn-secondary</a>
+            <button type="button" className="btn btn-primary" disabled>disabled</button>
+            <span className="eyebrow">eyebrow</span>
+          </div>
+          <div id="primitives" className="grid gap-gap-card sm:grid-cols-3 mb-xl">
+            <div className="card-dark">
+              <span className="icon-circle mb-component">01</span>
+              <p className="text-card-title">card-dark</p>
+              <p className="text-card-body">Dark elevated surface with a fine orange border.</p>
+            </div>
+            <div className="card-glass card-interactive border-glow">
+              <span className="icon-circle icon-circle-lg mb-component">02</span>
+              <p className="text-card-title">card-glass + border-glow</p>
+              <p className="text-card-body">Translucent panel with an orange glow.</p>
+            </div>
+            <div className="card-dark card-interactive">
+              <p className="text-card-title">card-interactive</p>
+              <p className="text-card-body">Lifts and glows on hover. Use only when clickable.</p>
+              <p className="text-gradient-accent text-heading-sm mt-component">text-gradient-accent</p>
+            </div>
+          </div>
+
           {/* Focus state */}
           <h2 className="text-heading-md mb-component">Focus state (tab to it)</h2>
           <button className="text-body-md border border-border rounded px-component py-xs mb-xl">

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { RidgeGlow } from '../primitives/RidgeGlow';
 import { Wordmark } from '@/components/primitives/Wordmark';
 import { UnderlineLink } from '@/components/primitives/UnderlineLink';
 import { getLoginUrl, getSignupUrl } from '@/lib/env';
@@ -37,6 +38,9 @@ export function SiteFooter() {
 
   return (
     <footer className="relative w-full" style={{ backgroundColor: 'var(--color-background)' }}>
+      <div aria-hidden="true" className="relative h-[var(--ridge-glow-height)] w-full overflow-hidden">
+        <RidgeGlow />
+      </div>
       <div aria-hidden="true" className="h-[2px] w-full" style={{ background: 'var(--gradient-accent)' }} />
 
       <div className="mx-auto flex w-full max-w-content-max flex-col gap-lg px-gutter-mobile py-section-mobile sm:px-gutter-tablet lg:flex-row lg:items-start lg:justify-between lg:px-gutter-desktop lg:py-section">
@@ -50,13 +54,13 @@ export function SiteFooter() {
         </div>
 
         <nav aria-label="Footer" className="flex flex-wrap gap-component text-body-sm">
-          <UnderlineLink href={getSignupUrl()} className="text-ink-muted transition-colors duration-fast hover:text-ink">
+          <UnderlineLink href={getSignupUrl()} className="text-ink-muted transition-colors duration-fast hover:text-orange-bright">
             Start free trial
           </UnderlineLink>
-          <UnderlineLink href={getLoginUrl()} className="text-ink-muted transition-colors duration-fast hover:text-ink">
+          <UnderlineLink href={getLoginUrl()} className="text-ink-muted transition-colors duration-fast hover:text-orange-bright">
             Login
           </UnderlineLink>
-          <UnderlineLink href="#chapter-01" className="text-ink-muted transition-colors duration-fast hover:text-ink">
+          <UnderlineLink href="#chapter-01" className="text-ink-muted transition-colors duration-fast hover:text-orange-bright">
             Back to top
           </UnderlineLink>
         </nav>

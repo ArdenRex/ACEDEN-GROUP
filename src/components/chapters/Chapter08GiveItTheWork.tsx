@@ -426,7 +426,7 @@ function GiveItTheWorkInteractive({ instant }: { instant: boolean }) {
                 as="a"
                 href={getSignupUrl()}
                 className="group relative inline-block overflow-hidden rounded-md px-lg py-sm text-body-md font-semibold transition-shadow duration-fast hover:shadow-[var(--shadow-glow-accent)]"
-                style={{ background: 'var(--gradient-accent)', color: 'var(--color-ink-on-dark)' }}
+                style={{ background: 'var(--gradient-accent)', color: 'var(--color-on-accent)' }}
               >
                 <span
                   aria-hidden="true"

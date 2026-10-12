@@ -57,8 +57,8 @@ const CLUSTER_EXCLUSION_RADIUS = 2.6;
 // red family as the chapter's 2D layer, so the 3D field reads as part
 // of one designed scene rather than a separate object dropped on top.
 const COLOR_INK = 0xf3efe7;
-const COLOR_VIOLET = 0x7c4dff;
-const COLOR_EMBER = 0xe2493d;
+const COLOR_VIOLET = 0xff941a;
+const COLOR_EMBER = 0xff7900;
 // STEP 53: the ambient field's palette is mostly-neutral now — four
 // parts clear ink-toned glass to one part violet — instead of the STEP
 // 52 five-color mix (ink/violet/blue/ink/gold) that, at this shape count
@@ -140,7 +140,7 @@ export function PeopleField3D({ scrollYProgress }: { scrollYProgress: MotionValu
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.5 : 2));
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -163,7 +163,7 @@ export function PeopleField3D({ scrollYProgress }: { scrollYProgress: MotionValu
     // Three-point rig, tuned for the new opaque/reflective material
     // (see below) rather than transmission — reflections are the whole
     // job now, so light direction and contrast matter more than before.
-    const fillLight = new THREE.HemisphereLight(0x8a6cff, 0x140a33, 1.1);
+    const fillLight = new THREE.HemisphereLight(0xffa860, 0x1a0e05, 1.1);
     scene.add(fillLight);
     // Warm key light for real specular highlights across each gem.
     const keyLight = new THREE.DirectionalLight(0xfff2df, 1.4);
@@ -173,7 +173,7 @@ export function PeopleField3D({ scrollYProgress }: { scrollYProgress: MotionValu
     // before: without it, the gems' far edge had no separation from the
     // dark background and lost their silhouette. A classic three-point
     // addition, not a decorative extra.
-    const rimLight = new THREE.DirectionalLight(0x7c8fff, 0.9);
+    const rimLight = new THREE.DirectionalLight(0xff8a33, 0.9);
     rimLight.position.set(-4, -2.5, -3.5);
     scene.add(rimLight);
     // Arrival light — dark until the cluster window, then blooms into
@@ -303,6 +303,9 @@ export function PeopleField3D({ scrollYProgress }: { scrollYProgress: MotionValu
 
     // ---- render loop ----
     let frameId: number;
+    // Render gate: stop drawing while scrolled off-screen or in a hidden tab.
+    let gateVisible = true;
+    let gateRunning = false;
     let elapsed = 0;
     function tick() {
       // STEP 65 (final polish — slow everything down a little so the
@@ -349,12 +352,28 @@ export function PeopleField3D({ scrollYProgress }: { scrollYProgress: MotionValu
       camera.position.x = Math.sin(progress * Math.PI) * 0.4;
 
       renderer.render(scene, camera);
-      frameId = requestAnimationFrame(tick);
+      gateRunning = gateVisible && !document.hidden;
+      if (gateRunning) frameId = requestAnimationFrame(tick);
     }
     tick();
+    const gateResume = () => {
+      if (!gateRunning && gateVisible && !document.hidden) tick();
+    };
+    const gateObserver = new IntersectionObserver(([entry]) => {
+      gateVisible = entry?.isIntersecting ?? true;
+      gateResume();
+    });
+    gateObserver.observe(container);
+    document.addEventListener('visibilitychange', gateResume);
+    // Let the browser restore the WebGL context after a loss instead of staying blank.
+    const onContextLost = (e: Event) => e.preventDefault();
+    renderer.domElement.addEventListener('webglcontextlost', onContextLost);
 
     return () => {
       cancelAnimationFrame(frameId);
+      gateObserver.disconnect();
+      document.removeEventListener('visibilitychange', gateResume);
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
       resizeObserver.disconnect();
       ambient.forEach(({ geometry, material }) => {
         geometry.dispose();

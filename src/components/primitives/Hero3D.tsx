@@ -47,10 +47,10 @@ const ACCENT_NODE_COUNT = 20;
 
 // Mirrors tokens.css — three/WebGL needs real color values, same
 // reasoning as lib/motion.ts's surfaceColor pair.
-const COLOR_INK_MUTED = 0x6b6660;
-const COLOR_RED = 0xa6332b;
-const COLOR_GOLD = 0xd98e2b;
-const COLOR_LINE = 0xa39d93;
+const COLOR_INK_MUTED = 0x9a8c7a;
+const COLOR_RED = 0xff7900;
+const COLOR_GOLD = 0xffb347;
+const COLOR_LINE = 0xc98a4b;
 
 export function Hero3D() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,7 @@ export function Hero3D() {
     const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
     camera.position.z = 8;
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.5 : 2));
     container.appendChild(renderer.domElement);
 
     const group = new THREE.Group();
@@ -110,7 +110,7 @@ export function Hero3D() {
       const material = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: isAccent ? 1 : 0.55,
+        opacity: isAccent ? 1 : 0.5,
       });
       const mesh = new THREE.Mesh(nodeGeometry, material);
       mesh.position.copy(pos);
@@ -123,7 +123,7 @@ export function Hero3D() {
         const haloMaterial = new THREE.MeshBasicMaterial({
           color,
           transparent: true,
-          opacity: 0.26,
+          opacity: 0.42,
           blending: THREE.AdditiveBlending,
           depthWrite: false,
         });
@@ -148,7 +148,7 @@ export function Hero3D() {
     }
     const lineGeometry = new THREE.BufferGeometry();
     lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lineVertices, 3));
-    const lineMaterial = new THREE.LineBasicMaterial({ color: COLOR_LINE, transparent: true, opacity: 0.22 });
+    const lineMaterial = new THREE.LineBasicMaterial({ color: COLOR_LINE, transparent: true, opacity: 0.3 });
     const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
     group.add(lines);
 
@@ -179,6 +179,9 @@ export function Hero3D() {
 
     // ---- render loop ----
     let frameId: number;
+    // Render gate: stop drawing while scrolled off-screen or in a hidden tab.
+    let gateVisible = true;
+    let gateRunning = false;
     function tick() {
       group.rotation.y += 0.0015;
       group.rotation.x += (targetX - group.rotation.x) * 0.02;
@@ -186,12 +189,28 @@ export function Hero3D() {
       // rather than overwriting it, so it never darts back to zero.
       group.rotation.y += (targetY * 0.15 - group.rotation.y * 0.002);
       renderer.render(scene, camera);
-      frameId = requestAnimationFrame(tick);
+      gateRunning = gateVisible && !document.hidden;
+      if (gateRunning) frameId = requestAnimationFrame(tick);
     }
     tick();
+    const gateResume = () => {
+      if (!gateRunning && gateVisible && !document.hidden) tick();
+    };
+    const gateObserver = new IntersectionObserver(([entry]) => {
+      gateVisible = entry?.isIntersecting ?? true;
+      gateResume();
+    });
+    gateObserver.observe(container);
+    document.addEventListener('visibilitychange', gateResume);
+    // Let the browser restore the WebGL context after a loss instead of staying blank.
+    const onContextLost = (e: Event) => e.preventDefault();
+    renderer.domElement.addEventListener('webglcontextlost', onContextLost);
 
     return () => {
       cancelAnimationFrame(frameId);
+      gateObserver.disconnect();
+      document.removeEventListener('visibilitychange', gateResume);
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
       resizeObserver.disconnect();
       if (fine) window.removeEventListener('mousemove', handlePointerMove);
       nodeGeometry.dispose();

@@ -60,7 +60,8 @@ export const interactionTransition = {
 export const scrollSmoothing = { stiffness: 300, damping: 40, mass: 1, restDelta: 0.0005 } as const;
 
 /**
- * Mirrors --color-background / --color-surface-dark from tokens.css.
+ * Mirrors --color-background / --color-surface-dark from tokens.css
+ * (black / charcoal redesign palette).
  * Framer can interpolate between color strings inside useTransform,
  * but only real color values — not a CSS custom property reference —
  * so a scroll-driven paper<->dark crossfade (the hand-off into/out of
@@ -68,6 +69,6 @@ export const scrollSmoothing = { stiffness: 300, damping: 40, mass: 1, restDelta
  * duration/ease above.
  */
 export const surfaceColor = {
-  paper: '#faf7f1',
-  dark: '#121116',
+  paper: '#070707',
+  dark: '#15110d',
 } as const;

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type RefObject } from 'react';
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { useReducedMotion } from 'framer-motion';
 
 /**
@@ -54,11 +55,11 @@ function bandY(fraction: number, z: number) {
 const Z_SPREAD = 1.2;
 
 // Mirrors tokens.css — WebGL needs real color values (see Hero3D's own note on this).
-const COLOR_SURFACE = 0xfbf8f2;
-const COLOR_SURFACE_SIDE = 0xe4ddcf;
-const COLOR_INK_MUTED = 0x6b6660;
-const COLOR_RED = 0xa6332b;
-const COLOR_GOLD = 0xd98e2b;
+const COLOR_SURFACE = 0x1d1812;
+const COLOR_SURFACE_SIDE = 0x0e0b08;
+const COLOR_INK_MUTED = 0x9a8c7a;
+const COLOR_RED = 0xff7900;
+const COLOR_GOLD = 0xffb347;
 
 function roundedRectShape(width: number, height: number, radius: number) {
   const shape = new THREE.Shape();
@@ -173,24 +174,31 @@ export function Organize3D({
     const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 100);
     camera.position.z = CAMERA_Z;
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.5 : 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
+
+    // Soft environment reflections so the dark metal cards catch highlights
+    // (same approach as the other scenes; no external HDRI).
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envTexture = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = envTexture;
+    scene.environmentIntensity = 0.5;
     container.appendChild(renderer.domElement);
 
     // ---- lights: gives MeshStandardMaterial something to shade against ----
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const keyLight = new THREE.DirectionalLight(0xfff4e0, 1.1);
+    scene.add(new THREE.AmbientLight(0xffd9b0, 0.55));
+    const keyLight = new THREE.DirectionalLight(0xfff0dc, 1.3);
     keyLight.position.set(-4, 6, 8);
     scene.add(keyLight);
-    const fillLight = new THREE.DirectionalLight(0xd8e4ff, 0.3);
+    const fillLight = new THREE.DirectionalLight(0xffa860, 0.4);
     fillLight.position.set(5, -3, 4);
     scene.add(fillLight);
     // Faint warm rim light from behind/below, so a rotating card's
     // trailing edge catches a highlight instead of going flat dark —
     // this is most of what reads as "real object" rather than
     // "cutout" once the card turns away from the key light.
-    const rimLight = new THREE.DirectionalLight(0xffe8c2, 0.4);
+    const rimLight = new THREE.DirectionalLight(0xff7a1a, 1.1);
     rimLight.position.set(2, -6, -6);
     scene.add(rimLight);
 
@@ -208,15 +216,15 @@ export function Organize3D({
 
     const faceMaterial = new THREE.MeshStandardMaterial({
       color: COLOR_SURFACE,
-      roughness: 0.85,
-      metalness: 0,
+      roughness: 0.45,
+      metalness: 0.35,
       transparent: true,
       opacity: 0.92,
     });
     const sideMaterial = new THREE.MeshStandardMaterial({
       color: COLOR_SURFACE_SIDE,
-      roughness: 0.9,
-      metalness: 0,
+      roughness: 0.5,
+      metalness: 0.3,
       transparent: true,
       opacity: 0.92,
     });
@@ -254,7 +262,7 @@ export function Organize3D({
       group.add(mesh);
 
       const edgeColor = isAccent ? (i % 2 === 0 ? COLOR_RED : COLOR_GOLD) : COLOR_INK_MUTED;
-      const edgeMaterial = new THREE.LineBasicMaterial({ color: edgeColor, transparent: true, opacity: isAccent ? 0.9 : 0.45 });
+      const edgeMaterial = new THREE.LineBasicMaterial({ color: edgeColor, transparent: true, opacity: isAccent ? 0.95 : 0.55 });
       group.add(new THREE.LineSegments(edges, edgeMaterial));
 
       // Grounding contact shadow — sits behind and slightly below the
@@ -274,9 +282,9 @@ export function Organize3D({
       // Soft glow/light-halo sprite sitting just behind the card.
       const glowMaterial = new THREE.SpriteMaterial({
         map: glowTexture,
-        color: isAccent ? edgeColor : 0xffffff,
+        color: isAccent ? edgeColor : 0xffb347,
         transparent: true,
-        opacity: isAccent ? 0.3 : 0.16,
+        opacity: isAccent ? 0.4 : 0.14,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       });
@@ -329,6 +337,9 @@ export function Organize3D({
 
     // ---- render loop ----
     let frameId: number;
+    // Render gate: stop drawing while scrolled off-screen or in a hidden tab.
+    let gateVisible = true;
+    let gateRunning = false;
     let t = 0;
     function tick() {
       t += 0.016;
@@ -337,12 +348,28 @@ export function Organize3D({
         c.group.rotation.y += c.spinSpeed * 0.02;
       }
       renderer.render(scene, camera);
-      frameId = requestAnimationFrame(tick);
+      gateRunning = gateVisible && !document.hidden;
+      if (gateRunning) frameId = requestAnimationFrame(tick);
     }
     tick();
+    const gateResume = () => {
+      if (!gateRunning && gateVisible && !document.hidden) tick();
+    };
+    const gateObserver = new IntersectionObserver(([entry]) => {
+      gateVisible = entry?.isIntersecting ?? true;
+      gateResume();
+    });
+    gateObserver.observe(container);
+    document.addEventListener('visibilitychange', gateResume);
+    // Let the browser restore the WebGL context after a loss instead of staying blank.
+    const onContextLost = (e: Event) => e.preventDefault();
+    renderer.domElement.addEventListener('webglcontextlost', onContextLost);
 
     return () => {
       cancelAnimationFrame(frameId);
+      gateObserver.disconnect();
+      document.removeEventListener('visibilitychange', gateResume);
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
       resizeObserver.disconnect();
       cardGeometry.dispose();
       edges.dispose();
@@ -359,6 +386,8 @@ export function Organize3D({
           }
         });
       });
+      envTexture.dispose();
+      pmrem.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement);

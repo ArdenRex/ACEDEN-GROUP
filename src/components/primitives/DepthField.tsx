@@ -248,7 +248,7 @@ export function AmbientOrbs({ variant }: { variant: 'network' | 'ecosystem' | 's
   // is a low-alpha ink tone instead of another near-white, so the
   // same soft shapes now actually register as gentle warmth/shadow
   // against the paper rather than disappearing into it.
-  const baseColor = variant === 'paper' ? 'var(--color-border-strong)' : 'var(--color-ink-muted-on-dark)';
+  const baseColor = variant === 'paper' ? 'var(--color-border-strong)' : '#8f4c10';
 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">

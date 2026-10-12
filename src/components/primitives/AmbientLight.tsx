@@ -85,15 +85,15 @@ export function AmbientLight() {
   return (
     <motion.div
       aria-hidden="true"
-      className="pointer-events-none fixed z-[15] h-[60vmax] w-[60vmax] rounded-full mix-blend-soft-light"
+      className="pointer-events-none fixed z-[15] h-[60vmax] w-[60vmax] rounded-full mix-blend-screen"
       style={{
         left,
         top,
         x: '-50%',
         y: '-50%',
-        opacity: 0.5,
+        opacity: 0.1,
         filter: 'blur(70px)',
-        background: 'radial-gradient(circle, var(--color-surface) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, var(--color-orange-primary, #ff7900) 0%, transparent 70%)',
       }}
     />
   );

@@ -260,9 +260,9 @@ const M_OUTWARD_TO: Pt = { x: 92, y: 96 };
 const SYSTEM_ANCHOR_COLOR: Record<SystemId, number> = {
   slack: 0xf3efe7,
   email: 0xf3efe7,
-  teams: 0x7c4dff,
+  teams: 0xff941a,
   jira: 0xf3efe7,
-  notion: 0xd98e2b,
+  notion: 0xffb347,
   trello: 0xf3efe7,
 };
 
@@ -523,7 +523,7 @@ function FieldTexture({
   );
   const glowBackground = useTransform(
     [glowXPct, glowYPct],
-    ([x, y]: string[]) => `radial-gradient(38% 34% at ${x} ${y}, var(--color-ink-muted-on-dark), transparent 72%)`,
+    ([x, y]: string[]) => `radial-gradient(38% 34% at ${x} ${y}, #8f4c10, transparent 72%)`,
   );
 
   // STEP 57 (sub-step 2 — real 3D anchors for the six systems): each
@@ -720,7 +720,7 @@ export function Chapter06Ecosystem() {
             style={{
               backgroundImage: `radial-gradient(38% 34% at ${isMobile ? M_CENTROID.x : D_CENTROID.x}% ${
                 isMobile ? M_CENTROID.y : D_CENTROID.y
-              }%, var(--color-ink-muted-on-dark), transparent 72%)`,
+              }%, #8f4c10, transparent 72%)`,
             }}
           />
           <SecondaryGrid id="ch06-dot-grid-secondary-static" />

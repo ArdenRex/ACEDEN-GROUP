@@ -44,8 +44,8 @@ export const RecognizedWord = forwardRef<HTMLSpanElement, RecognizedWordProps>(f
       className={clsx(
         'inline-block transition-all duration-300 ease-out',
         phase === 0 && 'font-display text-ink',
-        phase === 1 && 'font-mono text-ink -translate-y-px',
-        phase === 2 && 'font-mono text-ink-muted',
+        phase === 1 && 'font-mono text-red-on-dark -translate-y-px',
+        phase === 2 && 'font-mono text-red-muted',
       )}
     >
       {children}

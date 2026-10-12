@@ -22,10 +22,10 @@ export function Wordmark({ compact = false, className }: WordmarkProps) {
   return (
     <span className={clsx('inline-flex items-center gap-xs', className)}>
       <svg width="6" height="18" viewBox="0 0 6 18" aria-hidden="true" className="shrink-0">
-        <line x1="3" y1="1" x2="3" y2="17" stroke="var(--color-ink)" strokeWidth="1" />
+        <line x1="3" y1="1" x2="3" y2="17" stroke="var(--color-red)" strokeWidth="2" />
       </svg>
       {!compact && (
-        <span className="text-[0.8125rem] font-medium tracking-tight whitespace-nowrap sm:text-[0.875rem] lg:text-[0.9375rem]">
+        <span className="text-[0.8125rem] font-semibold tracking-tight whitespace-nowrap sm:text-[0.875rem] lg:text-[0.9375rem]">
           AI Workflow Coordinator
         </span>
       )}

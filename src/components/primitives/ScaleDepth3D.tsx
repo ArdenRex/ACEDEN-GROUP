@@ -90,9 +90,9 @@ const FIELD_WIDTH = 16;
 const FIELD_HEIGHT = 9;
 
 const COLOR_INK = 0xf3efe7;
-const COLOR_RED = 0xe2493d;
-const COLOR_GOLD = 0xd98e2b;
-const COLOR_VIOLET = 0x7c4dff;
+const COLOR_RED = 0xff7900;
+const COLOR_GOLD = 0xffb347;
+const COLOR_VIOLET = 0xff941a;
 
 interface Pt {
   x: number;
@@ -188,7 +188,7 @@ export function ScaleDepth3D({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x121116, 6, 16);
+    scene.fog = new THREE.Fog(0x0d0b09, 6, 16);
     const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
     camera.position.z = 9;
 
@@ -197,16 +197,16 @@ export function ScaleDepth3D({
     const envTexture = pmrem.fromScene(envRoom, 0.04).texture;
     scene.environment = envTexture;
 
-    const fillLight = new THREE.HemisphereLight(0x8a6cff, 0x140a33, 0.9);
+    const fillLight = new THREE.HemisphereLight(0xffa860, 0x1a0e05, 0.9);
     scene.add(fillLight);
     const keyLight = new THREE.DirectionalLight(0xfff2df, 1.05);
     keyLight.position.set(3, 4, 5);
     scene.add(keyLight);
-    const rimLight = new THREE.DirectionalLight(0x7c8fff, 0.6);
+    const rimLight = new THREE.DirectionalLight(0xff8a33, 0.6);
     rimLight.position.set(-4, -2, -3.5);
     scene.add(rimLight);
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.5 : 2));
     container.appendChild(renderer.domElement);
 
     // Tuned conservatively from the start (Chapter 06's Step 59 shipped
@@ -393,6 +393,9 @@ export function ScaleDepth3D({
 
     // ---- render loop ----
     let frameId: number;
+    // Render gate: stop drawing while scrolled off-screen or in a hidden tab.
+    let gateVisible = true;
+    let gateRunning = false;
     let elapsed = 0;
     function tick() {
       // STEP 65 (final polish — slow motion down a little for clarity):
@@ -473,12 +476,28 @@ export function ScaleDepth3D({
       group.rotation.y = progress * 0.18;
 
       composer.render();
-      frameId = requestAnimationFrame(tick);
+      gateRunning = gateVisible && !document.hidden;
+      if (gateRunning) frameId = requestAnimationFrame(tick);
     }
     tick();
+    const gateResume = () => {
+      if (!gateRunning && gateVisible && !document.hidden) tick();
+    };
+    const gateObserver = new IntersectionObserver(([entry]) => {
+      gateVisible = entry?.isIntersecting ?? true;
+      gateResume();
+    });
+    gateObserver.observe(container);
+    document.addEventListener('visibilitychange', gateResume);
+    // Let the browser restore the WebGL context after a loss instead of staying blank.
+    const onContextLost = (e: Event) => e.preventDefault();
+    renderer.domElement.addEventListener('webglcontextlost', onContextLost);
 
     return () => {
       cancelAnimationFrame(frameId);
+      gateObserver.disconnect();
+      document.removeEventListener('visibilitychange', gateResume);
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
       resizeObserver.disconnect();
       slabGeometry.dispose();
       slabs.forEach((mesh) => {

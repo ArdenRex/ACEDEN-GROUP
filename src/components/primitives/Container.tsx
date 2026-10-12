@@ -1,13 +1,14 @@
 import type { ElementType, ReactNode } from 'react';
 import clsx from 'clsx';
 
-type Width = 'narrow' | 'editorial' | 'wide' | 'max';
+type Width = 'narrow' | 'editorial' | 'wide' | 'max' | 'content';
 
 const widthClass: Record<Width, string> = {
   narrow: 'max-w-narrow',
   editorial: 'max-w-editorial',
   wide: 'max-w-wide',
   max: 'max-w-content-max',
+  content: 'max-w-content',
 };
 
 interface ContainerProps {
